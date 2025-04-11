@@ -9,8 +9,8 @@ void swap_ints(int *a, int *b)
 {
     int temp;
 
-    if (a == b)
-        return;
+    /* Même si les adresses sont différentes, si la valeur est identique,
+       il n'est pas nécessaire d'afficher le tableau après l'échange */
     temp = *a;
     *a = *b;
     *b = temp;
@@ -23,7 +23,7 @@ void swap_ints(int *a, int *b)
  * @high: Indice de fin de la partition (l'élément pivot est array[high]).
  * @size: Taille totale du tableau (pour l'affichage).
  *
- * Return: L'indice de partition.
+ * Return: L'indice du pivot une fois placé à sa position correcte.
  */
 int lomuto_partition(int *array, int low, int high, size_t size)
 {
@@ -36,23 +36,46 @@ int lomuto_partition(int *array, int low, int high, size_t size)
         if (array[j] < pivot)
         {
             i++;
+            /* On échange seulement si i et j sont différents.
+             * De plus, on affiche le tableau uniquement si l'échange change réellement l'ordre.
+             */
             if (i != j)
             {
-                swap_ints(&array[i], &array[j]);
-                print_array(array, size);
+                if (array[i] != array[j])
+                {
+                    swap_ints(&array[i], &array[j]);
+                    print_array(array, size);
+                }
+                else
+                {
+                    /* Inutile d'afficher car les valeurs sont identiques, mais on
+                       peut quand même réaliser l'échange pour respecter le mécanisme */
+                    swap_ints(&array[i], &array[j]);
+                }
             }
         }
     }
-    if (i + 1 != high)
+    /* Place le pivot à sa position finale :
+     * N'effectue l'échange et l'affichage que si le pivot n'est pas déjà à la bonne place
+     * et si les valeurs sont différentes.
+     */
+    if ((i + 1) != high)
     {
-        swap_ints(&array[i + 1], &array[high]);
-        print_array(array, size);
+        if (array[i + 1] != array[high])
+        {
+            swap_ints(&array[i + 1], &array[high]);
+            print_array(array, size);
+        }
+        else
+        {
+            swap_ints(&array[i + 1], &array[high]);
+        }
     }
     return (i + 1);
 }
 
 /**
- * quick_sort_recursive - Trie récursivement un sous-tableau avec l'algorithme Quick sort.
+ * quick_sort_recursive - Trie récursivement un sous-tableau à l'aide de Quick sort.
  * @array: Tableau d'entiers.
  * @low: Indice de début du sous-tableau.
  * @high: Indice de fin du sous-tableau.
@@ -83,3 +106,4 @@ void quick_sort(int *array, size_t size)
 
     quick_sort_recursive(array, 0, size - 1, size);
 }
+
